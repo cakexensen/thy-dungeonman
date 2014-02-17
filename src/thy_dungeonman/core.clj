@@ -1,5 +1,5 @@
 (ns thy-dungeonman.core
-  (:use [thy-dungeonman.areas.core :only [command]]
+  (:use [thy-dungeonman.command :only [command]]
         [thy-dungeonman.areas.main :only [make-main]])
   (:gen-class))
 
