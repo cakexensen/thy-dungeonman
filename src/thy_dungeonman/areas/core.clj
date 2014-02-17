@@ -2,5 +2,4 @@
 
 (defrecord Area [id])
 
-(defmulti look [area]
-  (:id area))
+(defmulti look (fn [area] (:id area)))
