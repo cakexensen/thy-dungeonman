@@ -2,4 +2,8 @@
 
 (defrecord Area [id])
 
-(defmulti look (fn [area] (:id area)))
+(defmulti help :id)
+
+(defmulti look :id)
+
+(defmulti helpeth :id)
