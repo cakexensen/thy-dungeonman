@@ -2,8 +2,6 @@
 
 (defrecord Area [id])
 
-(defmulti help :id)
-
-(defmulti look :id)
-
-(defmulti helpeth :id)
+(defmulti command
+  "commands dispatch by the area they are issued in, and by their first word"
+  (fn [area first-word & rest-words] [(:id area) first-word]))
