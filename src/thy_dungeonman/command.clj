@@ -10,5 +10,5 @@
   (let [first-word (first words)
         additional-words? (seq? (rest words))]
     (cond
-     (and (= (first-word) "look") additional-words?) "It looketh pretty awesome."
+     (and (= first-word "look") additional-words?) "It looketh pretty awesome."
      :else "That does not computeth. Type HELP if thou needs of it.")))
