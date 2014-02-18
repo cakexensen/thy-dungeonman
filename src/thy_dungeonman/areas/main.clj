@@ -1,8 +1,8 @@
 (ns thy-dungeonman.areas.main
-  (:use [thy-dungeonman.areas.core :only [->Area]]
+  (:use [thy-dungeonman.areas.core :only [->Area make-area]]
         [thy-dungeonman.command :only [command]]))
 
-(defn make-main []
+(defmethod make-area :main [id]
   (->Area :main))
 
 (defmethod command [:main "look"] [game & words]
