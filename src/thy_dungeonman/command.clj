@@ -31,6 +31,7 @@
               (cond
                (and empty-input? empty-stack?) true ; both empty
                (or empty-input? empty-stack?) false ; one empty
+               (nil? top-stack) (match input rest-stack) ; match empty rule
                (= top-input top-stack) (match rest-input rest-stack) ; match
                (keyword? top-stack) (expand input top-stack rest-stack) ; expand
                :else false)))]
