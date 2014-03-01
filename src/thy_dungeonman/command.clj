@@ -1,18 +1,17 @@
 (ns thy-dungeonman.command)
 
 ; commands are given in a context-free grammar format
-;   :get-ye-flask > :get :ye "flask"
-;   :get > "get" | "take"
-;   :ye > "ye" | "yon" | nil
+;   :get-ye-flask -> :get :ye "flask"
+;   :get -> "get" | "take"
+;   :ye -> "ye" | "yon" | nil
 ; :keywords are used as non-terminal symbols, "strings" are terminal symbols
 
-(def | '|)
-
-(defn make-command
+(defmacro make-command
   "converts a pretty representation of a cfg rule into processable data"
   [symbol _ & productions]
-  (let [rules (filter #(not= '(|) %) (partition-by #(= | %) productions))]
-    {symbol rules}))
+  (let [rules (partition-by #(= '| %) productions)
+        rules (filter #(not= '(|) %) rules)]
+    `{~symbol '~rules}))
 
 (defn match
   [match? num-known unknowns]
