@@ -1,9 +1,16 @@
 (ns thy-dungeonman.core
-  (:use [thy-dungeonman.command :only [command]]
-        [thy-dungeonman.game :only [new-game]])
-  (:gen-class))
+  (:gen-class)
+  (:use [thy-dungeonman.command :only [parse-command]]
+        [thy-dungeonman.game :only [new-game]]))
 
 (defn -main
   "initialize game stuffs and start running"
   [& args]
-  (println (:message (command (new-game) "look"))))
+  (let [game (new-game)
+        location (:location game)
+        input ["look" "flask"]
+        rule :look-flask
+        parsed (parse-command input
+                              rule
+                              (get-in game [:areas location :commands]))]
+    (println parsed)))

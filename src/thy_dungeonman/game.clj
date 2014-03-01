@@ -1,10 +1,11 @@
 (ns thy-dungeonman.game
-  (:use [thy-dungeonman.areas.core :only [make-area]]
-        [thy-dungeonman.areas.main]))
+  (:use [thy-dungeonman.areas.main :only [make-main]]))
 
-(defrecord Game [current-area areas message])
+(defrecord Game [location areas message])
 
-(defn new-game []
-  (map->Game {:current-area :main
-              :areas {:main (make-area :main)}
-              :message nil}))
+(defn new-game
+  "initializes a new game"
+  []
+  (->Game :main
+          {:main (make-main)}
+          ""))
