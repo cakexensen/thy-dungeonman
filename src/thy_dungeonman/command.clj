@@ -14,26 +14,56 @@
   (let [rules (filter #(not= '(|) %) (partition-by #(= | %) productions))]
     {symbol rules}))
 
-(defn match-command
-  "attempts to match an input to a command's rules"
-  [input commands start]
-  (letfn [(expand [input symbol stack]
-            (reduce #(or %1 %2)
-                    (map #(match input (concat % stack))
-                         (get commands symbol))))
-          (match [input stack]
-            (let [empty-input? (empty? input)
-                  empty-stack? (empty? stack)
-                  top-input (first input)
-                  top-stack (first stack)
-                  rest-input (rest input)
-                  rest-stack (rest stack)]
-              (cond
-               (and empty-input? empty-stack?) true ; both empty
-               (or empty-input? empty-stack?) false ; one empty
-               (nil? top-stack) (match input rest-stack) ; match empty rule
-               (= :unknown top-stack) (match rest-input rest-stack) ; unknown
-               (= top-input top-stack) (match rest-input rest-stack) ; match
-               (keyword? top-stack) (expand input top-stack rest-stack) ; expand
-               :else false)))]
-    (match input [start])))
+(defn match
+  [match? num-known unknowns]
+  ; there's definitely an easier way to do this...
+  {:match? match? :num-known num-known :unknowns unknowns})
+
+(defn is-non-terminal?
+  [symbol]
+  (keyword? symbol))
+
+(defn best-command
+  [commands]
+  (last (sort-by :num-known (filter :match? commands))))
+
+(declare parse-command)
+
+(defn expand
+  [input [top-symbol rest-symbols] commands num-known unknowns]
+  (best-command (map #(parse-command input
+                                     (concat % rest-symbols)
+                                     commands
+                                     num-known
+                                     unknowns)
+                     (get commands top-symbol))))
+
+(defn parse-command
+  ([input rule commands] (parse-command input [rule] commands 0 []))
+  ([input symbol commands num-known unknowns]
+     (let [top-symbol (first symbol)
+           top-input (first input)]
+       (cond
+        (and (empty? input) (empty? symbol)) (match true num-known unknowns)
+        (= top-symbol nil) (parse-command input
+                                          (rest symbol)
+                                          commands
+                                          num-known
+                                          unknowns)
+        (= top-symbol :unknown) (parse-command (rest input)
+                                               (rest symbol)
+                                               commands
+                                               num-known
+                                               (conj unknowns top-symbol))
+        (= top-symbol top-input) (parse-command (rest input)
+                                                (rest symbol)
+                                                commands
+                                                (inc num-known)
+                                                unknowns)
+        (is-non-terminal? top-symbol) (expand input
+                                              symbol
+                                              commands
+                                              num-known
+                                              unknowns)
+        :else (match false num-known unknowns)))))
+
