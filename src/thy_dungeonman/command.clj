@@ -29,7 +29,7 @@
 (declare parse-command)
 
 (defn expand
-  [input [top-symbol rest-symbols] commands num-known unknowns]
+  [input [top-symbol & rest-symbols] commands num-known unknowns]
   (best-command (map #(parse-command input
                                      (concat % rest-symbols)
                                      commands
@@ -38,17 +38,19 @@
                      (get commands top-symbol))))
 
 (defn parse-command
+  "parses an input against a specific rule"
   ([input rule commands] (parse-command input [rule] commands 0 []))
   ([input symbol commands num-known unknowns]
      (let [top-symbol (first symbol)
            top-input (first input)]
        (cond
         (and (empty? input) (empty? symbol)) (match true num-known unknowns)
-        (= top-symbol nil) (parse-command input
-                                          (rest symbol)
-                                          commands
-                                          num-known
-                                          unknowns)
+        (and (not (empty? symbol))
+             (= top-symbol nil)) (parse-command input
+                                                (rest symbol)
+                                                commands
+                                                num-known
+                                                unknowns)
         (= top-symbol :unknown) (parse-command (rest input)
                                                (rest symbol)
                                                commands
@@ -65,3 +67,41 @@
                                               num-known
                                               unknowns)
         :else (match false num-known unknowns)))))
+
+(defn find-best-match
+  "finds the best matching command for the given input"
+  [input commands]
+  (let [command-symbols (keys commands)
+        parse-each (fn [symbol]
+                     (assoc (parse-command input symbol commands)
+                       :key symbol))
+        matches (map parse-each command-symbols)]
+    (best-command matches)))
+
+(defn handle-command
+  "executes the specified command in the game"
+  [handlers {:keys [key unknowns]} game]
+  (let [handler (key handlers)]
+    (handler game unknowns)))
+
+(defn process-input
+  "finds the command for the given input and executes it"
+  [text game]
+  (let [input (clojure.string/split text #"\s")
+        location (:location game)
+        dictionary (:dictionary game)
+        area (get-in game [:areas location])
+        area-commands (:commands area)
+        area-commands (merge area-commands dictionary)
+        best-area (find-best-match input area-commands)
+        area-handlers (:handlers area)]
+    (if (:match? best-area)
+      ;best-area
+      (handle-command area-handlers best-area game)
+      (let [common-commands (:commands game)
+            common-commands (merge common-commands dictionary)
+            best-common (find-best-match input common-commands)
+            common-handlers (:handlers game)]
+        ;best-common
+        (handle-command common-handlers best-common game)
+        ))))
