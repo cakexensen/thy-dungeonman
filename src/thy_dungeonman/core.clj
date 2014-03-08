@@ -3,9 +3,16 @@
   (:use [thy-dungeonman.command :only [process-input]]
         [thy-dungeonman.game :only [new-game]]))
 
+(defn run-game
+  "runs the game process and recurses with state changes"
+  []
+  (loop [game (new-game)]
+    (println (:message game))
+    (let [input (read-line)]
+      (when (not= input "exit")
+        (recur (process-input input game))))))
+
 (defn -main
-  "initialize game stuffs and start running"
+  "starts the game"
   [& args]
-  (let [game (new-game)
-        processed (process-input "talk dude" game)]
-    (println (:message processed))))
+  (run-game))
