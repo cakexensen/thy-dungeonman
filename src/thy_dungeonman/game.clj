@@ -47,7 +47,7 @@
    :talk-unknown (fn [game unknowns]
                    (message game "Who is " (apply str unknowns) "? Your new boyfriend? Somebody from work you don't want me to meeteth?"))
    :give-unknown (fn [game unknowns]
-                   (message game "Thou don'tst have a " unknowns " to give. Go back to your tiny life."))
+                   (message game "Thou don'tst have a " (apply str unknowns) " to give. Go back to your tiny life."))
    :smell (fn [game unknowns]
             (message game "You smell a Wumpus."))})
 
