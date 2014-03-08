@@ -5,9 +5,9 @@
 
 (defn run-game
   "runs the game process and recurses with state changes"
-  []
+  [write-line read-line]
   (loop [game (new-game)]
-    (println (:message game))
+    (write-line (:message game))
     (let [input (read-line)]
       (when (not= input "exit")
         (recur (process-input input game))))))
@@ -15,4 +15,4 @@
 (defn -main
   "starts the game"
   [& args]
-  (run-game))
+  (run-game println read-line))
