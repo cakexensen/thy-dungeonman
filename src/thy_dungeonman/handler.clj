@@ -13,4 +13,4 @@
 (defn score
   "updates the game score"
   [game delta]
-  (update-in game [:score] #(+ % delta)))
+  (update-in game [:score] + delta))

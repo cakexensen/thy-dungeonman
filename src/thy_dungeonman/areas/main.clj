@@ -8,7 +8,9 @@
          (make-command :go-north -> "go" "north")))
 
 (def handlers
-  {:look-flask (fn [game unknowns]
+  {:help (fn [game unknowns]
+           (message game "Ye find yeself in yon dungeon. Ye see a SCROLL. Behind ye scroll is a FLASK. Obvious exits are NORTH, SOUTH and DENNIS."))
+   :look-flask (fn [game unknowns]
                  (message game "Looks like you could quaff some serious mead out of that thing."))
    :go-north (fn [game unknowns]
                (move game :north))})

@@ -1,9 +1,9 @@
 (ns thy-dungeonman.game
   (:use [thy-dungeonman.areas.main :only [make-main]]
-        [thy-dungeonman.command :only [make-command]]
+        [thy-dungeonman.command :only [make-command process-input]]
         [thy-dungeonman.handler :only [message score]]))
 
-(defrecord Game [location dictionary areas commands handlers message])
+(defrecord Game [location dictionary areas commands handlers message score])
 
 (def dictionary
   (merge (make-command :get -> "get" | "take")
@@ -54,9 +54,11 @@
 (defn new-game
   "initializes a new game"
   []
-  (->Game :main
-          dictionary
-          areas
-          commands
-          handlers
-          ""))
+  ; immediately look to pre-populate the message
+  (process-input "look" (->Game :main
+                                dictionary
+                                areas
+                                commands
+                                handlers
+                                ""
+                                0)))
