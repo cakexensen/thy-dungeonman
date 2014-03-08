@@ -7,5 +7,5 @@
   "initialize game stuffs and start running"
   [& args]
   (let [game (new-game)
-        processed (process-input "look flask" game)]
+        processed (process-input "talk dude" game)]
     (println (:message processed))))

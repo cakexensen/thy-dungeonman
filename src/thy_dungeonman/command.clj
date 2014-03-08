@@ -55,7 +55,7 @@
                                                (rest symbol)
                                                commands
                                                num-known
-                                               (conj unknowns top-symbol))
+                                               (conj unknowns top-input))
         (= top-symbol top-input) (parse-command (rest input)
                                                 (rest symbol)
                                                 commands
