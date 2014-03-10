@@ -1,5 +1,6 @@
 (ns thy-dungeonman.game
   (:use [thy-dungeonman.areas.main :only [make-main]]
+        [thy-dungeonman.areas.north :only [make-north]]
         [thy-dungeonman.command :only [make-command process-input]]
         [thy-dungeonman.handler :only [message score]]))
 
@@ -11,7 +12,8 @@
          (make-command :smell -> "smell" | "sniff")
          (make-command :help -> "help" | "helpeth" | "look")))
 
-(def areas {:main (make-main)})
+(def areas {:main (make-main)
+            :north (make-north)})
 
 (def commands
   (merge (make-command :die -> "die")
@@ -28,7 +30,7 @@
           (-> game
               (score -100)
               (message "That wasn't very smart. Your score was "
-                       (:score game)
+                       (- (:score game) 100)
                        ". Play again? [Y/N]")))
    :dance (fn [game unknowns]
             (message game "Thou shaketh it a little, and it feeleth all right."))
