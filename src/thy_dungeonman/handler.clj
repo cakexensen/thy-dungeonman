@@ -1,4 +1,5 @@
-(ns thy-dungeonman.handler)
+(ns thy-dungeonman.handler
+  (:use [thy-dungeonman.command :only [process-input]]))
 
 (defn message
   "sets the message to display"
@@ -8,7 +9,7 @@
 (defn move
   "moves the player to a new location"
   [game location]
-  (assoc game :location location))
+  (process-input "look" (assoc game :location location)))
 
 (defn score
   "updates the game score"
