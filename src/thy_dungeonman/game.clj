@@ -2,6 +2,7 @@
   (:use [thy-dungeonman.areas.main :only [make-main]]
         [thy-dungeonman.areas.north :only [make-north]]
         [thy-dungeonman.areas.south :only [make-south]]
+        [thy-dungeonman.areas.dennis :only [make-dennis]]
         [thy-dungeonman.command :only [make-command process-input]]
         [thy-dungeonman.handler :only [message score]]))
 
@@ -15,7 +16,8 @@
 
 (def areas {:main (make-main)
             :north (make-north)
-            :south (make-south)})
+            :south (make-south)
+            :dennis (make-dennis)})
 
 (def commands
   (merge (make-command :die -> "die")

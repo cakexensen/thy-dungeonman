@@ -9,7 +9,8 @@
          (make-command :get-flask -> :get :ye "flask")
          (make-command :get-scroll -> :get :ye "scroll")
          (make-command :go-north -> "go" "north")
-         (make-command :go-south -> "go" "south")))
+         (make-command :go-south -> "go" "south")
+         (make-command :go-dennis -> "go" "dennis")))
 
 (def handlers
   {:help (fn [game unknowns]
@@ -45,7 +46,9 @@
    :go-north (fn [game unknowns]
                (move game :north))
    :go-south (fn [game unknowns]
-               (move game :south))})
+               (move game :south))
+   :go-dennis (fn [game unknowns]
+                (move game :dennis))})
 
 (defn make-main
   "creates the initial main room"
