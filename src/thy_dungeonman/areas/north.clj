@@ -26,4 +26,4 @@
 (defn make-north
   "create the north room"
   []
-  (->Area :north command handlers))
+  (->Area :north commands handlers))
