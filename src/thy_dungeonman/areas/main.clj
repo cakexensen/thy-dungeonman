@@ -8,7 +8,8 @@
          (make-command :look-scroll -> "look" :ye "scroll")
          (make-command :get-flask -> :get :ye "flask")
          (make-command :get-scroll -> :get :ye "scroll")
-         (make-command :go-north -> "go" "north")))
+         (make-command :go-north -> "go" "north")
+         (make-command :go-south -> "go" "south")))
 
 (def handlers
   {:help (fn [game unknowns]
@@ -42,7 +43,9 @@
                        (score 2)
                        (assoc-in [:areas :main :scroll-gone] true))))
    :go-north (fn [game unknowns]
-               (move game :north))})
+               (move game :north))
+   :go-south (fn [game unknowns]
+               (move game :south))})
 
 (defn make-main
   "creates the initial main room"
