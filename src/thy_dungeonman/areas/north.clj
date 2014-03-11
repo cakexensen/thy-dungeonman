@@ -1,7 +1,7 @@
 (ns thy-dungeonman.areas.north
   (:use [thy-dungeonman.areas.core :only [->Area]]
         [thy-dungeonman.command :only [make-command]]
-        [thy-dungeonman.handler :only [message move score]]))
+        [thy-dungeonman.handler :only [message move score game-over]]))
 
 (def commands
   (merge (make-command :look-parapets -> "look" :ye "parapets")
@@ -19,7 +19,8 @@
    :get-rope (fn [game unknowns]
                (-> game
                    (score -1)
-                   (message "You attempt to take ye ROPE but alas it is enchanted! It glows a mustard red and smells like a public privy. The ROPE wraps round your neck and hangs you from parapets. With your last breath, you wonder what parapets are. GAME OVER. Your score was: " (dec (:score game)) ". Play again? (Y/N)")))
+                   (message "You attempt to take ye ROPE but alas it is enchanted! It glows a mustard red and smells like a public privy. The ROPE wraps round your neck and hangs you from parapets. With your last breath, you wonder what parapets are. GAME OVER. Your score was: " (dec (:score game)) ". Play again? (Y/N)")
+                   (game-over)))
    :go-south (fn [game unknowns]
                (move game :main))})
 

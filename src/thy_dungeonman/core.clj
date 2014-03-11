@@ -7,9 +7,9 @@
   "runs the game process and recurses with state changes"
   [write-line read-line]
   (loop [game (new-game)]
-    (write-line (:message game))
-    (let [input (read-line)]
-      (when (not= input "exit")
+    (when-not (nil? game)
+      (write-line (:message game))
+      (let [input (read-line)]
         (recur (process-input input game))))))
 
 (defn -main

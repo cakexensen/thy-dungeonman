@@ -1,7 +1,7 @@
 (ns thy-dungeonman.areas.main
   (:use [thy-dungeonman.areas.core :only [->Area]]
         [thy-dungeonman.command :only [make-command]]
-        [thy-dungeonman.handler :only [message move score]]))
+        [thy-dungeonman.handler :only [message move score game-over]]))
 
 (def commands
   (merge (make-command :look-flask -> "look" :ye "flask")
@@ -33,7 +33,8 @@
                       (score -1000)
                       (message "Okay, okay. You unbolt yon FLASK and hold it aloft. A great shaking begins. The dungeon ceiling collapses down on you, crushing you in twain. Apparently, this was a load-bearing FLASK. Your score was: "
                                (- (:score game) 1000)
-                               " Play again? [Y/N]"))))
+                               " Play again? [Y/N]")
+                      (game-over))))
    :get-scroll (fn [game unknowns]
                  (if (get-in game [:areas :main :scroll-gone])
                    (-> game

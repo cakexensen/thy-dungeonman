@@ -4,9 +4,9 @@
         [thy-dungeonman.areas.south :only [make-south]]
         [thy-dungeonman.areas.dennis :only [make-dennis]]
         [thy-dungeonman.command :only [make-command process-input]]
-        [thy-dungeonman.handler :only [message score]]))
+        [thy-dungeonman.handler :only [message score game-over]]))
 
-(defrecord Game [location dictionary areas commands handlers message score])
+(defrecord Game [location dictionary areas commands handlers game-over-commands game-over-handlers message score])
 
 (def dictionary
   (merge (make-command :get -> "get" | "take")
@@ -27,7 +27,8 @@
          (make-command :go-unknown -> "go" :unknown)
          (make-command :look-unknown -> "look" :unknown)
          (make-command :talk-unknown -> "talk" :unknown)
-         (make-command :give-unknown -> "give" :unknown)))
+         (make-command :give-unknown -> "give" :unknown)
+         (make-command :exit -> "exit" | "quit")))
 
 (def handlers
   {:die (fn [game unknowns]
@@ -35,7 +36,8 @@
               (score -100)
               (message "That wasn't very smart. Your score was "
                        (- (:score game) 100)
-                       ". Play again? [Y/N]")))
+                       ". Play again? [Y/N]")
+              (game-over)))
    :dance (fn [game unknowns]
             (message game "Thou shaketh it a little, and it feeleth all right."))
    :get-unknown (fn [game unknowns]
@@ -55,7 +57,21 @@
    :give-unknown (fn [game unknowns]
                    (message game "Thou don'tst have a " (apply str unknowns) " to give. Go back to your tiny life."))
    :smell (fn [game unknowns]
-            (message game "You smell a Wumpus."))})
+            (message game "You smell a Wumpus."))
+   :exit (fn [game unknowns]
+           nil)})
+
+(def game-over-commands
+  (merge (make-command :y -> "y" | "yes")
+         (make-command :n -> "n" | "no")))
+
+(declare new-game)
+
+(def game-over-handlers
+  {:y (fn [game unknowns]
+        (new-game))
+   :n (fn [game unknowns]
+        nil)})
 
 (defn new-game
   "initializes a new game"
@@ -66,5 +82,7 @@
                                 areas
                                 commands
                                 handlers
+                                game-over-commands
+                                game-over-handlers
                                 ""
                                 0)))

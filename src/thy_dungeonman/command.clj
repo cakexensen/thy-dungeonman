@@ -88,6 +88,10 @@
   "finds the command for the given input and executes it"
   [text game]
   (let [input (clojure.string/split text #"\s")
+        game-over (get game :game-over false)
+        game-over-commands (:game-over-commands game)
+        best-game-over (find-best-match input game-over-commands)
+        game-over-handlers (:game-over-handlers game)
         location (:location game)
         dictionary (:dictionary game)
         area (get-in game [:areas location])
@@ -95,13 +99,11 @@
         area-commands (merge area-commands dictionary)
         best-area (find-best-match input area-commands)
         area-handlers (:handlers area)]
-    (if (:match? best-area)
-      ;best-area
-      (handle-command area-handlers best-area game)
-      (let [common-commands (:commands game)
-            common-commands (merge common-commands dictionary)
-            best-common (find-best-match input common-commands)
-            common-handlers (:handlers game)]
-        ;best-common
-        (handle-command common-handlers best-common game)
-        ))))
+    (cond
+     game-over (handle-command game-over-handlers best-game-over game)
+     (:match? best-area) (handle-command area-handlers best-area game)
+     :else (let [common-commands (:commands game)
+                 common-commands (merge common-commands dictionary)
+                 best-common (find-best-match input common-commands)
+                 common-handlers (:handlers game)]
+             (handle-command common-handlers best-common game)))))

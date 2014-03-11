@@ -15,3 +15,8 @@
   "updates the game score"
   [game delta]
   (update-in game [:score] + delta))
+
+(defn game-over
+  "causes a game over"
+  [game]
+  (assoc game :game-over true))
