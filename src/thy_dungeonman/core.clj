@@ -5,11 +5,11 @@
 
 (defn run-game
   "runs the game process and recurses with state changes"
-  [write-line read-line]
+  [display-message get-input]
   (loop [game (new-game)]
     (when-not (nil? game)
-      (write-line (:message game))
-      (let [input (read-line)]
+      (display-message (:message game))
+      (let [input (get-input)]
         (recur (process-input input game))))))
 
 (defn -main
