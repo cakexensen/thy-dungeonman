@@ -1,7 +1,7 @@
 (ns thy-dungeonman.areas.dennis
   (:use [thy-dungeonman.areas.core :only [->Area]]
         [thy-dungeonman.command :only [make-command]]
-        [thy-dungeonman.handler :only [message move score]]))
+        [thy-dungeonman.handler :only [message move score game-over]]))
 
 (def commands
   (merge (make-command :not-dennis -> "not" "dennis")
@@ -23,7 +23,9 @@
                      (message game "Man, that art a nice jimberjam."))
    :give-trinket (fn [game unknowns]
                    (if (get-in game [:areas :south :get-trinket-count])
-                     (message game "A novel idea! You givst the TRINKET to Dennis and he happily agrees to tell you what parapets are. With this new knowledge, ye escapes from yon dungeon in order to search for new dungeons and to remain... THY DUNGEONMAN!! You hath won! Congraturation!! Your score was: " (:score game))
+                     (-> game
+                         (message "A novel idea! You givst the TRINKET to Dennis and he happily agrees to tell you what parapets are. With this new knowledge, ye escapes from yon dungeon in order to search for new dungeons and to remain... THY DUNGEONMAN!! You hath won! Congraturation!! Your score was: " (:score game))
+                         (game-over))
                      (message game "Thou don'tst have a trinket to give. Go back to your tiny life.")))})
 
 (defn make-dennis

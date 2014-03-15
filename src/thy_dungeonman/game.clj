@@ -63,7 +63,7 @@
 
 (def game-over-commands
   (merge (make-command :y -> "y" | "yes")
-         (make-command :n -> "n" | "no")))
+         (make-command :n -> "n" | "no" | "exit" | "quit")))
 
 (declare new-game)
 
