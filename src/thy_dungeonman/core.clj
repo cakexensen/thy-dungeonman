@@ -1,7 +1,8 @@
 (ns thy-dungeonman.core
   (:gen-class)
   (:use [thy-dungeonman.command :only [process-input]]
-        [thy-dungeonman.game :only [new-game]]))
+        [thy-dungeonman.game :only [new-game]]
+        [thy-dungeonman.gui.core :only [start]]))
 
 (defn run-game
   "runs the game process and recurses with state changes"
@@ -15,4 +16,6 @@
 (defn -main
   "starts the game"
   [& args]
-  (run-game println read-line))
+  (start run-game)
+  ;(run-game println read-line)
+  )
