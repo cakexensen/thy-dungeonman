@@ -12,7 +12,6 @@
                  ]
   :repositories [["libgdx"
                   "http://libgdx.badlogicgames.com/nightlies/maven/"]]
-  :aot [thy-dungeonman.gui.Game]
   :main ^:skip-aot thy-dungeonman.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
