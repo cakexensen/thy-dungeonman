@@ -87,7 +87,7 @@
 (defn process-input
   "finds the command for the given input and executes it"
   [text game]
-  (let [input (clojure.string/split text #"\s")
+  (let [input (clojure.string/split (clojure.string/lower-case text) #"\s")
         game-over (get game :game-over false)
         game-over-commands (:game-over-commands game)
         best-game-over (find-best-match input game-over-commands)
