@@ -106,4 +106,6 @@
                  common-commands (merge common-commands dictionary)
                  best-common (find-best-match input common-commands)
                  common-handlers (:handlers game)]
-             (handle-command common-handlers best-common game)))))
+             (if (:match? best-common)
+               (handle-command common-handlers best-common game)
+               ((:unknown game) game nil))))))

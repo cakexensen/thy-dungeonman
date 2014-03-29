@@ -6,7 +6,7 @@
         [thy-dungeonman.command :only [make-command process-input]]
         [thy-dungeonman.handler :only [message score game-over]]))
 
-(defrecord Game [location dictionary areas commands handlers game-over-commands game-over-handlers message score])
+(defrecord Game [location dictionary areas commands handlers game-over-commands game-over-handlers message score unknown])
 
 (def dictionary
   (merge (make-command :get -> "get" | "take")
@@ -30,6 +30,10 @@
          (make-command :give-unknown -> "give" :unknown)
          (make-command :exit -> "exit" | "quit")))
 
+(defn unknown
+  [game unknowns]
+  (message game "That does not computeth. Type HELP if thou needs of it."))
+
 (def handlers
   {:die (fn [game unknowns]
           (-> game
@@ -50,8 +54,7 @@
                  (message game "Thou cannotst go there. Who do you think thou art, a magistrate?!"))
    :look-unknown (fn [game unknowns]
                    (message game "It looketh pretty awesome."))
-   :unknown (fn [game unknowns]
-              (message game "That does not computeth. Type HELP if thou needs of it."))
+   :unknown unknown
    :talk-unknown (fn [game unknowns]
                    (message game "Who is " (apply str unknowns) "? Your new boyfriend? Somebody from work you don't want me to meeteth?"))
    :give-unknown (fn [game unknowns]
@@ -85,4 +88,5 @@
                                 game-over-commands
                                 game-over-handlers
                                 ""
-                                0)))
+                                0
+                                unknown)))
