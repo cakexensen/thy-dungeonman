@@ -38,6 +38,14 @@
    Input$Keys/Z \z
    Input$Keys/SPACE \space})
 
+; style used for all labels
+; use a delay, because creating the LabelStyle at compile time doesn't work
+(def style
+  (delay
+    (Label$LabelStyle.
+     (BitmapFont. (.internal (LwjglFiles.) "courier-new-32.fnt") false)
+     (Color. 0 1 0 1))))
+
 (defn adjust-for-split-word
   "adjusts a split-at result so that a word isn't split across the boundary"
   [line rest]
@@ -51,12 +59,12 @@
 
 (defn format-message
   "wraps the message to fit the screen"
-  [message style stage]
+  [message stage]
   (loop [message message
          line-number 0]
     (let [[line rest] (split-at 42 message)
           [line rest] (adjust-for-split-word line rest)
-          line-label (Label. (apply str line) style)]
+          line-label (Label. (apply str line) @style)]
       (.setY line-label (- 560 (* line-number 32)))
       (.addActor @stage line-label)
       (when-not (empty? rest)
@@ -67,6 +75,37 @@
   []
   (.glClearColor (Gdx/gl) 0 0 0 0)
   (.glClear (Gdx/gl) GL20/GL_COLOR_BUFFER_BIT))
+
+; true if we are past the title screen
+(def title-shown (atom false))
+
+(defn title-screen
+  "displays the title screen"
+  [stage]
+  (let [title "Thy Dungeonman"
+        graphic ["/\\      /\\     /\\"
+                 "||/----\\||     ||"
+                 "\\_------_/     ||"
+                 " / o  o \\      ||"
+                 " /  ||  \\   o__||__o"
+                 " / ---- \\    \\----/"
+                 " /\\/\\/\\/\\      ||"
+                 "               oo"]
+        prompt "Press any key to enter yon Dungeon"
+        title-label (Label. title @style)
+        graphic-labels (map #(Label. % @style) graphic)
+        graphic-labels-offsets (map vector (iterate inc 0) graphic-labels)
+        prompt-label (Label. prompt @style)]
+    (.setY title-label 560)
+    (.setX title-label 260)
+    (doseq [[offset label] graphic-labels-offsets]
+      (.setY label (- 400 (* offset 32)))
+      (.setX label 200))
+    (.setX prompt-label 60)
+    (.addActor @stage title-label)
+    (doseq [label graphic-labels]
+      (.addActor @stage label))
+    (.addActor @stage prompt-label)))
 
 (gen-class :name thy-dungeonman.gui.Game
            :extends com.badlogic.gdx.Game)
@@ -86,16 +125,14 @@
       (render [delta]
         (clear-screen)
         (reset! stage (Stage.))
-        (let [style (Label$LabelStyle.
-                     (BitmapFont. (.internal (LwjglFiles.) "courier-new-32.fnt")
-                                  false)
-                     (Color. 0 1 0 1))
-              input-label (Label. (str ">" (apply str @input-buffer)) style)
-              prompt-label (Label. "What wouldst thou deau?" style)]
-          (format-message @message style stage)
-          (.setY prompt-label 32)
-          (.addActor @stage prompt-label)
-          (.addActor @stage input-label))
+        (if @title-shown
+          (let [input-label (Label. (str ">" (apply str @input-buffer)) @style)
+                prompt-label (Label. "What wouldst thou deau?" @style)]
+            (format-message @message stage)
+            (.setY prompt-label 32)
+            (.addActor @stage prompt-label)
+            (.addActor @stage input-label))
+          (title-screen stage))
         (doto @stage
           (.act delta)
           (.draw)))
@@ -112,6 +149,7 @@
   (proxy [InputProcessor] []
     (keyDown [keycode]
       (cond
+       (not @title-shown) (swap! title-shown (fn [_] true))
        (= keycode Input$Keys/BACKSPACE) (swap! input-buffer (comp vec butlast))
        (= keycode Input$Keys/ENTER) (do
                                       (deliver @input-promise (apply str @input-buffer))
