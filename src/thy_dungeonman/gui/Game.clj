@@ -46,6 +46,21 @@
      (BitmapFont. (.internal (LwjglFiles.) "courier-new-32.fnt") false)
      (Color. 0 1 0 1))))
 
+(def animated-message (atom ""))
+
+(def animated-index (atom 0))
+
+(defn animate-message
+  "'animates' the message being written by adding one character at a time"
+  [message]
+  (let [message-changed? (not= message @animated-message)]
+    (when message-changed?
+      (swap! animated-message (fn [_] message))
+      (swap! animated-index (fn [_] 0)))
+    (when (< @animated-index (count @animated-message))
+      (swap! animated-index inc))
+    (take @animated-index @animated-message)))
+
 (defn adjust-for-split-word
   "adjusts a split-at result so that a word isn't split across the boundary"
   [line rest]
@@ -127,8 +142,9 @@
         (reset! stage (Stage.))
         (if @title-shown
           (let [input-label (Label. (str ">" (apply str @input-buffer)) @style)
-                prompt-label (Label. "What wouldst thou deau?" @style)]
-            (format-message @message stage)
+                prompt-label (Label. "What wouldst thou deau?" @style)
+                partial-message (animate-message @message)]
+            (format-message partial-message stage)
             (.setY prompt-label 32)
             (.addActor @stage prompt-label)
             (.addActor @stage input-label))
