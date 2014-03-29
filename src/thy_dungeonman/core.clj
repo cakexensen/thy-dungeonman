@@ -16,6 +16,8 @@
 (defn -main
   "starts the game"
   [& args]
+  ; start the gui and it will run the game
   (start run-game)
+  ; run game in the terminal instead
   ;(run-game println read-line)
   )

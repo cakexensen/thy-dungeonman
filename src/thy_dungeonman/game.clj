@@ -8,10 +8,10 @@
 
 (defrecord Game [location dictionary areas commands handlers game-over-commands game-over-handlers message score unknown])
 
+; dictionary is commands that might be used in any area
 (def dictionary
   (merge (make-command :get -> "get" | "take")
          (make-command :ye -> "ye" | "yon" | nil)
-         (make-command :smell -> "smell" | "sniff")
          (make-command :help -> "help" | "helpeth" | "look")))
 
 (def areas {:main (make-main)
@@ -28,6 +28,7 @@
          (make-command :look-unknown -> "look" :unknown)
          (make-command :talk-unknown -> "talk" :unknown)
          (make-command :give-unknown -> "give" :unknown)
+         (make-command :smell -> "smell" | "sniff")
          (make-command :exit -> "exit" | "quit")))
 
 (defn unknown

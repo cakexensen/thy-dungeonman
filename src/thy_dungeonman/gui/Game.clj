@@ -8,6 +8,7 @@
            [com.badlogic.gdx.files FileHandle])
   (:use [thy-dungeonman.gui.state :only [message input-promise input-buffer]]))
 
+; map inputs to characters. currently not supporting uppercase?
 (def typographic-keys
   {Input$Keys/A \a
    Input$Keys/B \b

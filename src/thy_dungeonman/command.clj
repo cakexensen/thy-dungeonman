@@ -14,21 +14,25 @@
     `{~symbol '~rules}))
 
 (defn match
+  "create a new 'match'"
   [match? num-known unknowns]
   ; there's definitely an easier way to do this...
   {:match? match? :num-known num-known :unknowns unknowns})
 
 (defn is-non-terminal?
+  "keywords are non-terminal symbols"
   [symbol]
   (keyword? symbol))
 
 (defn best-command
+  "get the best matching command out of a collection of commands"
   [commands]
   (last (sort-by :num-known (filter :match? commands))))
 
 (declare parse-command)
 
 (defn expand
+  "expands a non-terminal symbol into its productions"
   [input [top-symbol & rest-symbols] commands num-known unknowns]
   (best-command (map #(parse-command input
                                      (concat % rest-symbols)
