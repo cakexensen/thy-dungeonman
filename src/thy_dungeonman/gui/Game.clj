@@ -9,32 +9,32 @@
   (:use [thy-dungeonman.gui.state :only [message input-promise input-buffer]]))
 
 (def typographic-keys
-  {Input$Keys/A \A
-   Input$Keys/B \B
-   Input$Keys/C \C
-   Input$Keys/D \D
-   Input$Keys/E \E
-   Input$Keys/F \F
-   Input$Keys/G \G
-   Input$Keys/H \H
-   Input$Keys/I \I
-   Input$Keys/J \J
-   Input$Keys/K \K
-   Input$Keys/L \L
-   Input$Keys/M \M
-   Input$Keys/N \N
-   Input$Keys/O \O
-   Input$Keys/P \P
-   Input$Keys/Q \Q
-   Input$Keys/R \R
-   Input$Keys/S \S
-   Input$Keys/T \T
-   Input$Keys/U \U
-   Input$Keys/V \V
-   Input$Keys/W \W
-   Input$Keys/X \X
-   Input$Keys/Y \Y
-   Input$Keys/Z \Z
+  {Input$Keys/A \a
+   Input$Keys/B \b
+   Input$Keys/C \c
+   Input$Keys/D \d
+   Input$Keys/E \e
+   Input$Keys/F \f
+   Input$Keys/G \g
+   Input$Keys/H \h
+   Input$Keys/I \i
+   Input$Keys/J \j
+   Input$Keys/K \k
+   Input$Keys/L \l
+   Input$Keys/M \m
+   Input$Keys/N \n
+   Input$Keys/O \o
+   Input$Keys/P \p
+   Input$Keys/Q \q
+   Input$Keys/R \r
+   Input$Keys/S \s
+   Input$Keys/T \t
+   Input$Keys/U \u
+   Input$Keys/V \v
+   Input$Keys/W \w
+   Input$Keys/X \x
+   Input$Keys/Y \y
+   Input$Keys/Z \z
    Input$Keys/SPACE \space})
 
 (defn adjust-for-split-word
@@ -88,9 +88,12 @@
         (let [style (Label$LabelStyle.
                      (BitmapFont. (.internal (LwjglFiles.) "courier-new-32.fnt")
                                   false)
-                     (Color. 1 1 1 1))
-              input-label (Label. (apply str @input-buffer) style)]
+                     (Color. 0 1 0 1))
+              input-label (Label. (str ">" (apply str @input-buffer)) style)
+              prompt-label (Label. "What wouldst thou deau?" style)]
           (format-message @message style stage)
+          (.setY prompt-label 32)
+          (.addActor @stage prompt-label)
           (.addActor @stage input-label))
         (doto @stage
           (.act delta)
