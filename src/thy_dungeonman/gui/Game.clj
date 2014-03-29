@@ -4,10 +4,9 @@
            [com.badlogic.gdx.graphics.g2d BitmapFont]
            [com.badlogic.gdx.scenes.scene2d Stage]
            [com.badlogic.gdx.scenes.scene2d.ui Label Label$LabelStyle]
-           [com.badlogic.gdx.backends.lwjgl LwjglApplication]
+           [com.badlogic.gdx.backends.lwjgl LwjglApplication LwjglFiles]
            [com.badlogic.gdx.files FileHandle])
-  (:use [thy-dungeonman.gui.state :only [message input-promise input-buffer]]
-        [clojure.java.io :only [resource file]]))
+  (:use [thy-dungeonman.gui.state :only [message input-promise input-buffer]]))
 
 (def typographic-keys
   {Input$Keys/A \A
@@ -87,7 +86,7 @@
         (clear-screen)
         (reset! stage (Stage.))
         (let [style (Label$LabelStyle.
-                     (BitmapFont. (FileHandle. (file (resource "courier-new-32.fnt")))
+                     (BitmapFont. (.internal (LwjglFiles.) "courier-new-32.fnt")
                                   false)
                      (Color. 1 1 1 1))
               input-label (Label. (apply str @input-buffer) style)]
