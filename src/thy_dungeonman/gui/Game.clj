@@ -46,6 +46,12 @@
      (BitmapFont. (.internal (LwjglFiles.) "courier-new-32.fnt") false)
      (Color. 0 1 0 1))))
 
+(def max-line-length 33)
+
+(def line-pixel-height 32)
+
+(def first-line-y 440)
+
 (def animated-message (atom ""))
 
 (def animated-index (atom 0))
@@ -77,10 +83,10 @@
   [message stage]
   (loop [message message
          line-number 0]
-    (let [[line rest] (split-at 42 message)
+    (let [[line rest] (split-at max-line-length message)
           [line rest] (adjust-for-split-word line rest)
           line-label (Label. (apply str line) @style)]
-      (.setY line-label (- 560 (* line-number 32)))
+      (.setY line-label (- first-line-y (* line-number line-pixel-height)))
       (.addActor @stage line-label)
       (when-not (empty? rest)
         (recur rest (inc line-number))))))
@@ -106,17 +112,21 @@
                  " / ---- \\    \\----/"
                  " /\\/\\/\\/\\      ||"
                  "               oo"]
-        prompt "Press any key to enter yon Dungeon"
+        prompt "Press a key to enter yon Dungeon"
         title-label (Label. title @style)
+        title-label-x 190
         graphic-labels (map #(Label. % @style) graphic)
         graphic-labels-offsets (map vector (iterate inc 0) graphic-labels)
-        prompt-label (Label. prompt @style)]
-    (.setY title-label 560)
-    (.setX title-label 260)
+        graphic-labels-first-line-y (- first-line-y (* 3 line-pixel-height))
+        graphic-labels-x 120
+        prompt-label (Label. prompt @style)
+        prompt-label-x 0]
+    (.setY title-label first-line-y)
+    (.setX title-label title-label-x)
     (doseq [[offset label] graphic-labels-offsets]
-      (.setY label (- 400 (* offset 32)))
-      (.setX label 200))
-    (.setX prompt-label 60)
+      (.setY label (- graphic-labels-first-line-y (* offset line-pixel-height)))
+      (.setX label graphic-labels-x))
+    (.setX prompt-label prompt-label-x)
     (.addActor @stage title-label)
     (doseq [label graphic-labels]
       (.addActor @stage label))
@@ -145,7 +155,7 @@
                 prompt-label (Label. "What wouldst thou deau?" @style)
                 partial-message (animate-message @message)]
             (format-message partial-message stage)
-            (.setY prompt-label 32)
+            (.setY prompt-label line-pixel-height)
             (.addActor @stage prompt-label)
             (.addActor @stage input-label))
           (title-screen stage))

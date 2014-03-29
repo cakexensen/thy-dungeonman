@@ -26,7 +26,7 @@
   "starts the gui and runs the game"
   [run-game]
   (let [; set up the gui application
-        app (LwjglApplication. (thy-dungeonman.gui.Game.) "Thy Dungeonman" 800 600 true)
+        app (LwjglApplication. (thy-dungeonman.gui.Game.) "Thy Dungeonman" 640 480 true)
         ; start the game in a separate thread
         game (Thread. #(do
                          (run-game display-message get-input)
