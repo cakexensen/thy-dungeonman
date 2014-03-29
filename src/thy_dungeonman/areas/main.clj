@@ -26,7 +26,7 @@
    :get-flask (fn [game unknowns]
                 (if (< (get-in game [:areas :main :get-flask-count] 0) 3)
                   (-> game
-                      (message "Ye cannot get the FLASK. It is firmly bolted to a wall which is bolted to the rest of the dungeon which is probably bolted to a castle. Never you mind.")
+                      (message "Ye cannot get ye FLASK. It is firmly bolted to a wall which is bolted to the rest of the dungeon which is probably bolted to a castle. Never you mind.")
                       (score 1)
                       (update-in [:areas :main :get-flask-count] (fnil inc 1)))
                   (-> game

@@ -4,8 +4,10 @@
            [com.badlogic.gdx.graphics.g2d BitmapFont]
            [com.badlogic.gdx.scenes.scene2d Stage]
            [com.badlogic.gdx.scenes.scene2d.ui Label Label$LabelStyle]
-           [com.badlogic.gdx.backends.lwjgl LwjglApplication])
-  (:use [thy-dungeonman.gui.state :only [message input-promise input-buffer]]))
+           [com.badlogic.gdx.backends.lwjgl LwjglApplication]
+           [com.badlogic.gdx.files FileHandle])
+  (:use [thy-dungeonman.gui.state :only [message input-promise input-buffer]]
+        [clojure.java.io :only [resource file]]))
 
 (def typographic-keys
   {Input$Keys/A \A
@@ -36,6 +38,30 @@
    Input$Keys/Z \Z
    Input$Keys/SPACE \space})
 
+(defn adjust-for-split-word
+  "adjusts a split-at result so that a word isn't split across the boundary"
+  [line rest]
+  (if (empty? rest)
+    [line rest]
+    (let [line-length (count line)
+          line-last-space (.lastIndexOf line \space)
+          [new-line pre-rest] (split-at (inc line-last-space) line)
+          new-rest (concat pre-rest rest)]
+      [new-line new-rest])))
+
+(defn format-message
+  "wraps the message to fit the screen"
+  [message style stage]
+  (loop [message message
+         line-number 0]
+    (let [[line rest] (split-at 42 message)
+          [line rest] (adjust-for-split-word line rest)
+          line-label (Label. (apply str line) style)]
+      (.setY line-label (- 560 (* line-number 32)))
+      (.addActor @stage line-label)
+      (when-not (empty? rest)
+        (recur rest (inc line-number))))))
+
 (defn clear-screen
   "clears the screen"
   []
@@ -60,13 +86,13 @@
       (render [delta]
         (clear-screen)
         (reset! stage (Stage.))
-        (let [input-style (Label$LabelStyle. (BitmapFont.) (Color. 1 1 1 1))
-              input-label (Label. (apply str @input-buffer) input-style)
-              message-style (Label$LabelStyle. (BitmapFont.) (Color. 1 1 1 1))
-              message-label (Label. @message message-style)]
-          (.setY message-label 580)
-          (.addActor @stage input-label)
-          (.addActor @stage message-label))
+        (let [style (Label$LabelStyle.
+                     (BitmapFont. (FileHandle. (file (resource "courier-new-32.fnt")))
+                                  false)
+                     (Color. 1 1 1 1))
+              input-label (Label. (apply str @input-buffer) style)]
+          (format-message @message style stage)
+          (.addActor @stage input-label))
         (doto @stage
           (.act delta)
           (.draw)))
